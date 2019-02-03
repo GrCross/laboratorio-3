@@ -32,33 +32,40 @@ public class HostBlackListsValidator {
     public List<Integer> checkHost(String ipaddress, int n){
         
         LinkedList<Integer> blackListOcurrences=new LinkedList<>();
-        
-        
-        
+        int checkedListsCount = 0;
+        int ocurrencesCount = 0;
         HostBlacklistsDataSourceFacade skds = HostBlacklistsDataSourceFacade.getInstance();
         int lenOfBlackList = skds.getRegisteredServersCount();
-        
+        ThreadCheckList[] threads = new ThreadCheckList[n];
         int nObjects = 0;
         if(lenOfBlackList % n != 0)nObjects = lenOfBlackList/n + 1;
         else nObjects = lenOfBlackList/n;
-        int step =0;
-        
-        for (int i = 0; i < n; i++) {
-        	if (i==n-1) {
-        		int fin= lenOfBlackList % n; 
-        		ThreadCheckList threadCheckList = new ThreadCheckList(skds, step+fin, step, ipaddress);
-        		threadCheckList.start();
-        		threadCheckList.join();
-        		
-        		step+=nObjects;
+        int step = 0;
 
+        for (int i = 0; i < n; i++) {
+        	if (i == n-1) {
+        		int fin = lenOfBlackList % n; 
+        		ThreadCheckList threadCheckList = new ThreadCheckList(skds, skds.getRegisteredServersCount(), step, ipaddress);
+        		threads[i] = threadCheckList;
+        		threadCheckList.start();
         	}else {
         		ThreadCheckList threadCheckList = new ThreadCheckList(skds, step+nObjects, step, ipaddress);
+        		threads[i] = threadCheckList;
         		step+=nObjects;
+        		threadCheckList.start();
+        		
         	}
-			
 		}
         
+        for (int i = 0; i < n; i++) {
+        	try {threads[i].join();} catch (InterruptedException e) {e.printStackTrace();}
+    		int nApariciones = (threads[i]).ask();
+    		checkedListsCount += threads[i].getListasRecorridas();
+    		ocurrencesCount += nApariciones;
+    		blackListOcurrences.addAll(threads[i].getBlackListOcurrences());
+        }
+        System.out.print("numero de ocurrencias: ");
+        System.out.println(ocurrencesCount);
         if (ocurrencesCount >= BLACK_LIST_ALARM_COUNT){
             skds.reportAsNotTrustworthy(ipaddress);
         }
@@ -66,8 +73,7 @@ public class HostBlackListsValidator {
             skds.reportAsTrustworthy(ipaddress);
         }                
         
-        
-		LOG.log(Level.INFO, "Checked Black Lists:{0} of {1}", new Object[]{checkedListsCount, skds.getRegisteredServersCount()});
+		LOG.log(Level.INFO, "Checked Black Lists:{0} of {1}", new Object[]{ checkedListsCount, skds.getRegisteredServersCount()} );
         
         return blackListOcurrences;
     }
