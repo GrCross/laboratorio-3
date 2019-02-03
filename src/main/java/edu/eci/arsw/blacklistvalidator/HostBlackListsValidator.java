@@ -6,6 +6,8 @@
 package edu.eci.arsw.blacklistvalidator;
 
 import edu.eci.arsw.spamkeywordsdatasource.HostBlacklistsDataSourceFacade;
+
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
@@ -18,7 +20,7 @@ import java.util.logging.Logger;
 public class HostBlackListsValidator {
 
     private static final int BLACK_LIST_ALARM_COUNT=5;
-    
+    ThreadCheckList[] threads;
     /**
      * Check the given host's IP address in all the available black lists,
      * and report it as NOT Trustworthy when such IP was reported in at least
@@ -56,6 +58,18 @@ public class HostBlackListsValidator {
         		
         	}
 		}
+        boolean flag = true;
+    	while(flag) {
+    		 for (int j = 0; j < n; j++) {
+    			 if(threads[j].ask()>= 5 || acabaronLosThreads(threads)) {
+    				 flag = false; 
+    			 }  
+    		 }
+    		 for (int j = 0; j < n  && !flag; j++) {
+    			 threads[j].stop();
+    		 }
+    	}
+        
         
         for (int i = 0; i < n; i++) {
         	try {threads[i].join();} catch (InterruptedException e) {e.printStackTrace();}
@@ -64,6 +78,7 @@ public class HostBlackListsValidator {
     		ocurrencesCount += nApariciones;
     		blackListOcurrences.addAll(threads[i].getBlackListOcurrences());
         }
+        
         System.out.print("numero de ocurrencias: ");
         System.out.println(ocurrencesCount);
         if (ocurrencesCount >= BLACK_LIST_ALARM_COUNT){
@@ -78,6 +93,15 @@ public class HostBlackListsValidator {
         return blackListOcurrences;
     }
     
+    private boolean acabaronLosThreads(ThreadCheckList[] threads) {
+    	boolean acabaron = true;
+    	for (int i = 0; i < threads.length && acabaron; i++) {
+			if (threads[i].isAlive()) {
+				acabaron = false;
+			}
+		}
+    	return acabaron;
+    }
     
     private static final Logger LOG = Logger.getLogger(HostBlackListsValidator.class.getName());
     

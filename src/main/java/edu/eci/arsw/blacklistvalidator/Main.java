@@ -23,7 +23,7 @@ public class Main {
     	
         HostBlackListsValidator hblv=new HostBlackListsValidator();
         System.out.println("corriendo");
-        List<Integer> blackListOcurrences=hblv.checkHost("212.24.24.55",n);
+        List<Integer> blackListOcurrences=hblv.checkHost("200.24.34.55",n);
         
         System.out.println("The host was found in the following blacklists:"+blackListOcurrences);
         

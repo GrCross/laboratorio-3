@@ -26,6 +26,7 @@ public class ThreadCheckList extends Thread {
 	public void run() {
 		boolean finalizar=false;
 		for (int i = lower;i <= upper && !finalizar;i++){
+			
             if (skds.isInBlackListServer(i, ipAddress)){
                 blackListOcurrences.add(i);
                 ocurrencesCount++;
