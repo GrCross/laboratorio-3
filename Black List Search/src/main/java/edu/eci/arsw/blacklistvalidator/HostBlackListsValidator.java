@@ -58,6 +58,7 @@ public class HostBlackListsValidator {
         		
         	}
 		}
+        /*
         boolean flag = true;
     	while(flag) {
     		 for (int j = 0; j < n; j++) {
@@ -69,7 +70,7 @@ public class HostBlackListsValidator {
     			 threads[j].stop();
     		 }
     	}
-        
+        */
         
         for (int i = 0; i < n; i++) {
         	try {threads[i].join();} catch (InterruptedException e) {e.printStackTrace();}
