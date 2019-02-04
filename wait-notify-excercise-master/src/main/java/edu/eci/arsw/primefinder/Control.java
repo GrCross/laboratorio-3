@@ -7,6 +7,7 @@ package edu.eci.arsw.primefinder;
 
 import javax.swing.*;
 import java.awt.event.*;
+import java.util.Scanner;
 
 /**
  *
@@ -39,11 +40,36 @@ public class Control extends Thread {
 
     @Override
     public void run() {
+    	Scanner sc = new Scanner(System.in);
         for(int i = 0;i < NTHREADS;i++ ) {
             pft[i].start();
            
         }
-        javax.swing.Timer t = new javax.swing.Timer(3000, new ActionListener() {
+        for(int i = 0;i < NTHREADS;i++ ) {
+        	synchronized (pft[i]) {
+    			try {
+    				wait(1000);
+    				System.out.println("El numero de primos encontrados en el Thread "+"es "+pft[i].getPrimes().size());
+    				System.out.println("Oprime un boton");
+    				sc.nextLine();
+    				notifyAll();
+    			
+    			} catch (InterruptedException e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
+
+    		}
+           
+        }	
+        
+    	
+       
+        
+        
+		
+        
+        /*javax.swing.Timer t = new javax.swing.Timer(3000, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
             	for(int i = 0;i < NTHREADS;i++ ) {
                     try {
