@@ -4,8 +4,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.*;
 public class PrimeFinderThread extends Thread {
-
+	
+	private final static int TMILISECONDS = 5000;
 	int a, b;
+	boolean esperar=false;
+	boolean seguir=true;
+	
 
 	private List<Integer> primes;
 
@@ -14,32 +18,32 @@ public class PrimeFinderThread extends Thread {
 		this.primes = new LinkedList<>();
 		this.a = a;
 		this.b = b;
+		
 	}
 
 	@Override
 	public void run() {
 		Scanner sc = new Scanner(System.in);
 		for (int i = a; i < b; i++) {
-			synchronized (this) {
+			if (esperar) {
+				synchronized (this) {
+					try {
+						this.wait();
+					} catch (InterruptedException e) {
+						
+						e.printStackTrace();
+					}
+				}
+				
+			}//else if(seguir) {this.notify(); seguir=false;}
 				if (isPrime(i)) {
 					primes.add(i);
-					// System.out.println(i);
 				}
-				try {
-					wait(1000);
-					System.out.println("El numero de primos encontrados en el Thread "+Thread.currentThread().toString()+"es "+primes.size());
-					System.out.println("Oprime un boton");
-					sc.nextLine();
-					notifyAll();
-				
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				
 			
-			}
+				
 		}
+		
+		
 	}
 
 	boolean isPrime(int n) {
@@ -58,5 +62,19 @@ public class PrimeFinderThread extends Thread {
 	public List<Integer> getPrimes() {
 		return primes;
 	}
+	
+	public void waitProcess() {
+		esperar=true;
+	}
+	
+	public synchronized void notifyProcess() {
+			seguir=true;
+			esperar=false;
+			this.notifyAll();
+		
+	}
+	
+	
+	
 
 }

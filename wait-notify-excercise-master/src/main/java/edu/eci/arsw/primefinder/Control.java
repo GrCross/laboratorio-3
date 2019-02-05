@@ -16,7 +16,7 @@ public class Control extends Thread {
     
     private final static int NTHREADS = 3;
     private final static int MAXVALUE = 30000000;
-    private final static int TMILISECONDS = 9000;
+    private final static int TMILISECONDS = 5000;
 
     private final int NDATA = MAXVALUE / NTHREADS;
 
@@ -43,63 +43,48 @@ public class Control extends Thread {
     	Scanner sc = new Scanner(System.in);
         for(int i = 0;i < NTHREADS;i++ ) {
             pft[i].start();
-           
         }
-        for(int i = 0;i < NTHREADS;i++ ) {
-        	synchronized (pft[i]) {
-    			try {
-    				wait(1000);
-    				System.out.println("El numero de primos encontrados en el Thread "+"es "+pft[i].getPrimes().size());
-    				System.out.println("Oprime un boton");
-    				sc.nextLine();
-    				notifyAll();
-    			
-    			} catch (InterruptedException e) {
-    				// TODO Auto-generated catch block
-    				e.printStackTrace();
-    			}
-
-    		}
-           
-        }	
         
-    	
+        long end = System.currentTimeMillis() + TMILISECONDS;
+       
+        while(System.currentTimeMillis() <= end) {
+        	//System.out.println(pft[0].getPrimes().size());
+        	if(System.currentTimeMillis() >=  end && !terminate()) {
+        		
+        		for (int i = 0; i < pft.length; i++)  {
+        			
+        			pft[i].waitProcess();
+        			System.out.println("El thread " + i+" ha encontrado "+pft[i].getPrimes().size());
+        			
+        		}
+        		
+        		System.out.println("Oprime un boton");
+				sc.nextLine();
+				for (int i = 0; i < pft.length; i++)  {
+        			pft[i].notifyProcess();        			
+        		}
+				synchronized (this){this.notifyAll();}
+        		end = System.currentTimeMillis()+TMILISECONDS;
+        	}else if(System.currentTimeMillis() >=  end && terminate()) {
+        		for (int i = 0; i < pft.length; i++) System.out.println("El thread " + i+" ha encontrado "+pft[i].getPrimes().size());
+        		System.out.println("ya acabamos");
+        		System.exit(0);
+        	}
+        }
+        
+        
+        
        
         
-        
-		
-        
-        /*javax.swing.Timer t = new javax.swing.Timer(3000, new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-            	for(int i = 0;i < NTHREADS;i++ ) {
-                    try {
-                    	 synchronized(pft[i]){
-                    		 System.out.println(pft[i].getPrimes().size()+" ");
-                    		 pft[i].wait();
-                         }
-						
-					} catch (InterruptedException e1) {
-						e1.printStackTrace();
-					}
-                }
-        		System.out.println("hola");
-            }
-         });
-        while (true) t.start();
-        
-        
-        /*long end = System.currentTimeMillis() + TMILISECONDS;
-        //System.out.println("start: "+start);
-        while(true) {
-        	
-        	
-        		System.out.println("tiempo real: "+System.currentTimeMillis());
-        		System.out.println("soy end:"+end);
-        		System.out.println("hola");
-        		//end = System.currentTimeMillis()+TMILISECONDS;
-        	
-        }*/
-        
+    }
+    
+    
+    private boolean terminate() {
+    	boolean acabar = true;
+    	for (int i = 0; i < pft.length && acabar; i++) {
+			if(pft[i].isAlive()) acabar = false;
+		}
+    	return acabar;
     }
 
     
