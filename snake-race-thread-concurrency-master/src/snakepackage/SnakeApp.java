@@ -119,17 +119,16 @@ public class SnakeApp {
 		}
 
 		frame.setVisible(true);
-
+//-----------------
+		//Unnecessary active wait
 		while (true) {
 			int x = 0;
 			for (int i = 0; i != MAX_THREADS; i++) {
-				if (snakes[i].end == true)
-					x++;
+				if (snakes[i].end == true) x++;
 			}
-			if (x == MAX_THREADS)
-				break;
+			if (x == MAX_THREADS)break;
 		}
-
+//------------------
 		System.out.println("END OF GAME");
 
 		System.out.println("RESULT");

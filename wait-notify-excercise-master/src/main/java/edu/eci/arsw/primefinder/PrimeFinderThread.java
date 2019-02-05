@@ -23,6 +23,7 @@ public class PrimeFinderThread extends Thread {
 
 	@Override
 	public void run() {
+		System.out.println("Cada 5 segundos");
 		Scanner sc = new Scanner(System.in);
 		for (int i = a; i < b; i++) {
 			if (esperar) {

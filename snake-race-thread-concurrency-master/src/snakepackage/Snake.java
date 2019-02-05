@@ -19,7 +19,7 @@ public class Snake extends Observable implements Runnable {
 	private int direction = Direction.NO_DIRECTION;
 	private final int INIT_SIZE = 3;
 
-	private boolean hasTurbo = false;
+	private boolean hasTurbo = true;
 	private int jumps = 0;
 	private boolean isSelected = false;
 	private int growing = 0;
@@ -52,7 +52,7 @@ public class Snake extends Observable implements Runnable {
 						notifyObservers();
 
 						if (hasTurbo == true)
-							Thread.sleep(500 / 3);
+							Thread.sleep(500 / 20);
 						else
 							Thread.sleep(500);
 					} catch (InterruptedException e) {
