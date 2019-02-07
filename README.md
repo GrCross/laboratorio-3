@@ -27,11 +27,11 @@ From the above, implement the following sequence of experiments to perform the v
 2.  As many threads as processing cores (have the program determine this using the Runtime API
     ![](img/2Threat.PNG)
 3.  As many threads as twice the number of processing cores.
-    ![](img/3Threat.PNG)
+    ![](img/3Thread.PNG)
 4.  50 threads
-    ![](img/4Threat.PNG)
+    ![](img/4Thread.PNG)
 5.  100 threads
-	![](img/5Threat.PNG)
+	![](img/5Threas.PNG)
 
 -   According to Amdahls law, where `S(n)` is the theoretical improvement of performance, **P** the parallel fraction of the algorithm, and **n** the number of threads, the greater **n**, the better this improvement should be. Why is the best performance not achieved with the 500 threads? How is this performance compared when using 200 ?.
 **R://** using the Amdahls law if we compare the S(200) and S(500) the diference is really smalls, but if we compare for example S(20) and S(100) the diference is the difference is more significant.
