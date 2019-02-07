@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import enums.GridSize;
 import java.awt.BorderLayout;
@@ -71,6 +72,18 @@ public class SnakeApp {
 				resume();			
 			}				
 		});
+        
+        JButton start = new JButton("Start");
+        
+        start.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent ev){
+			resume();			
+			}				
+		});
+        
+        actionsBPabel.add(start);
+        
+        
         actionsBPabel.add(resume);
         frame.add(actionsBPabel,BorderLayout.SOUTH);
 
@@ -83,8 +96,6 @@ public class SnakeApp {
 
     private void init() {
         
-        
-        
         for (int i = 0; i != MAX_THREADS; i++) {
             
             snakes[i] = new Snake(i + 1, spawn[i], i + 1);
@@ -92,10 +103,11 @@ public class SnakeApp {
             thread[i] = new Thread(snakes[i]);
             thread[i].start();
         }
-
+        this.start();
         frame.setVisible(true);
-
-            
+        
+        
+        
         while (true) {
             int x = 0;
             for (int i = 0; i != MAX_THREADS; i++) {
@@ -114,17 +126,44 @@ public class SnakeApp {
             System.out.println("["+i+"] :"+thread[i].getState());
         }
         
-
+       
     }
 
     public static SnakeApp getApp() {
         return app;
     }
     
-    private void pausa() {
+    private void start() {
     	for (int i = 0; i < snakes.length; i++) {
 			snakes[i].pausar();
 		}
+    }
+    
+    private void pausa() {
+    	long temp = 0;
+    	int bigSnake = 0;
+    	for (int i = 0; i < snakes.length; i++) {
+			snakes[i].pausar();
+			if(snakes[i].getBody().size() > temp) {
+				temp = snakes[i].getBody().size();
+				bigSnake = snakes[i].getIdt();
+			} 
+		}
+    	
+    	int deadSnake = 0;
+    	temp = Long.MAX_VALUE-1;
+    	for (int i = 0; i < snakes.length; i++) {
+    		if(snakes[i].getSnakeDead() < temp ) {
+    			temp = snakes[i].getSnakeDead();
+    			deadSnake = snakes[i].getIdt();
+    		}
+    	}
+    	
+    	if(deadSnake == 0) {
+    		JOptionPane.showMessageDialog(null, "biggest snake: "+ bigSnake+"\n"+"there is not dead snakes");
+    	}else JOptionPane.showMessageDialog(null, "biggest snake: "+ bigSnake+"\n"+"first dead snake: "+deadSnake);
+    	
+    	
     }
     
     private synchronized void resume() {

@@ -191,5 +191,28 @@ public class Cell {
 	public void setBarrier(boolean barrier) {
 		this.barrier = barrier;
 	}
+	
+	public synchronized void reserveCell() {
+		long inicioEspera = 0;
+		if(this.full) {
+			while(this.full) {
+				
+				try {
+					wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 
+		
+
+		this.full = true;
+		notifyAll();
+	}
+	
+	
+
+	
+	
 }
