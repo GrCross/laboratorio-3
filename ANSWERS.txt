@@ -1,0 +1,6 @@
+Possible race conditions
+- All the snakes are competing for the cells and the resources
+An incorrect or inappropriate use of collections, considering its concurrent handling(For this increase the game speed and execute it multiples times until an error has been raised).
+- the storage of the snakes there was a linkedList and no another collection that support the concurrecy
+Unnecessary use of active waits
+- In the method init() in SnakeApp there was a while loop that affects a variable that was never used
